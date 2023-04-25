@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    filter 
+{% endblock %}
+
+    {% block body %}
+
+        <center><h2>Events</h2></center>
+
+        <form action="/">
+            <button>МЕНЮ</button>
+        </form>
+        
+
+        <p>Применен фильтр:
+            <br> 
+                <b>
+                    temperature = {{ temperature }}°C, humidity = {{ humidity }}% 
+                </b>
+        </p>
+        {%if events == [] %}
+            <br>
+            <i>
+                <center>
+                    <h3>Событий нет</h3>
+                </center>
+            </i>
+        {% else %}
+            {% for event in events %}
+                <p>
+                    <h3>
+                        <li>
+                            <a href="all_events/{{ event.id }}">{{ event.name }}</a>
+                        </li>
+                    </h3>
+                </p>
+            {% endfor %} 
+
+        {% endif %}
+
+    {% endblock %}

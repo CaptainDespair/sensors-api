@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    filter 
+{% endblock %}
+
+    {% block body %}
+
+            <center><h2>Filter by parametres: temperature and humidity</h2></center>
+
+            <form action="/">
+                <button>МЕНЮ</button>
+            </form>
+
+            <form>
+                <p>
+                  <label for="temperature">Введите параметр <b>"temperature"</b>, °C:</label>
+                  <br><input type="text" name="temperature" id="temperature" placeholder="Enter an integer...">
+                </p>
+                <p>
+                  <label for="humidity">Введите параметр <b>"humidity"</b>, %:</label>
+                  <br><input type="text" name="humidity" id="humidity" placeholder="Enter an integer...">
+                </p>
+                <button type="submit">Подтвердить</button>
+              </form>
+              
+              
+            <br>
+            {% if error %}
+              <i>{{ error }}</i>
+            {% endif %}
+            <br>
+            
+    {% endblock %}

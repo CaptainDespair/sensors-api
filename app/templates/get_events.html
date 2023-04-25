@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    sensor_events
+{% endblock %}
+
+    {% block body %}
+    
+            <center><h2>Events of <i>{{ sensor.name }}</i></h2></center>
+
+            <form action="/">
+                <button>МЕНЮ</button>
+            </form>
+
+            {%if events == [] %}
+                <br>
+                <i>
+                    <center>
+                        <h2>Событий нет</h2>
+                    </center>
+                </i>
+            {% else %}
+                
+            <h2>Название сенсора: {{ sensor.name }}</h2>
+            <h2>События: </h2>
+                {% for event in events %}
+                    <p>
+                        <h2>
+                            <li>
+                                <a href="/all_events/{{ event.id }}">{{ event.name }}</a>
+                            </li>
+                        </h2>
+                    </p>
+                {% endfor %}
+                 
+            {% endif %}
+
+    {% endblock %}

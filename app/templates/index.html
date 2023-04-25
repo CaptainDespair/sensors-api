@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    sensors_API_service
+{% endblock %}
+
+    {% block body %}
+
+        <center><h2>Events and sensors API</h2></center>
+
+            <h3>
+                Выберите действие
+            </h3>
+
+                <br><form action="/crud_events">
+                    <button>CRUD событий + загрузка JSON</button>
+                </form>
+                <br><form action="/crud_sensors">
+                    <button>CRUD датчиков</button>
+                </form>
+                <br><form action="/all_events">
+                    <button>Все события</button>
+                </form>
+                <br><form action="/all_sensors">
+                    <button>Получение событий по датчику</button>
+                </form>
+                <br><form action="/filter_by_parameters">
+                    <button>Фильтр по параметрам</button>
+                </form>
+                
+    {% endblock %}

@@ -9,4 +9,5 @@ app.config.from_object(DevelopementConfig)
 
 db.init_app(app)
 migrate = Migrate(app, db)
-#from . import views
+
+from app import views

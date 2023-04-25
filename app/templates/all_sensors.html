@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    all_sensors
+{% endblock %}
+
+    {% block body %}
+
+            <center><h2>Sensors</h2></center>
+
+            <form action="/">
+                <button>МЕНЮ</button>
+            </form>
+            
+            {%if sensors == [] %}
+                <br>
+                <i>
+                    <center>
+                        <h3>Датчиков нет</h3>
+                    </center>
+                </i>
+            {% else %}
+
+                {% for sensor in sensors %}
+                    <p>
+                        <h2>
+                            <li><a href="all_sensors/{{ sensor.id }}">{{ sensor.name }}</a></li>
+                        </h2>
+                    </p>
+                {% endfor %} 
+
+            {% endif %}
+            
+    {% endblock %}

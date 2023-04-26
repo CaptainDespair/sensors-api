@@ -31,8 +31,7 @@
                 </p>
                 <button type="submit">Создать событие</button>
               </form>
-              
-            <br>
+              <br>  
 
             {% if success_message %}
                 {{ success_message }}
@@ -41,8 +40,6 @@
             {% if error_message %}
               <i>{{ error_message }}</i>
               <i>{{ annotation }}</i>
-              <i>{{ sensors_id }}</i>
             {% endif %}
-            <br>
 
     {% endblock %}

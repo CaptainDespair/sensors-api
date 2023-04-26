@@ -1,28 +1,31 @@
-from flask import request, render_template, redirect
-from sqlalchemy.exc import IntegrityError, PendingRollbackError
 import os
 import json
+from flask import request, render_template
+from sqlalchemy.exc import IntegrityError
 
 from app import app, db
 from app.models import Event, Sensor
 
+
+#menu
 @app.route('/')
 def index():
     return render_template('index.html')
-    
+       
 
+#show all events with pagination by 5 objects
 @app.route('/all_events')
 def show_all_events():
     try:
         page = request.args.get('page', type=int, default=1)
         events = Event.query.paginate(page=page, per_page=5)
-
         return render_template('all_events.html', 
                                events=events)
     except:
         return render_template('index.html')
     
-
+    
+#show event details with method Delete 
 @app.route('/all_events/<int:id>', methods=["GET", "POST"])
 def get_event_info(id):
     try:
@@ -46,6 +49,7 @@ def get_event_info(id):
                                event=event)
 
 
+#show all sensors on the page
 @app.route('/all_sensors')
 def show_all_sensors():
     try:
@@ -56,19 +60,20 @@ def show_all_sensors():
         return render_template('index.html')
 
 
+#show sensor's events, with method Delete
 @app.route('/all_sensors/<int:id>', methods=["GET", "POST"])
 def get_events_from_sensor(id):
     try:
         if request.method == 'GET':
             sensor = Sensor.query.get(id)
-            events = Event.query.\
-                        filter_by\
+            events = Event.query\
+                        .filter_by\
                         (sensor_id = id)\
                         .all()
             return render_template('get_sensor_events.html', 
                                 events=events, 
                                 sensor=sensor)
-        if request.method == 'POST':
+        elif request.method == 'POST':
             sensor_id = request.form.get('delete_sensor')
             sensor = Sensor.query.get(sensor_id)
             db.session.delete(sensor)
@@ -81,13 +86,15 @@ def get_events_from_sensor(id):
     except:
         return render_template('all_sensors.html')
 
-   
+
+#filter with temperature and humidity parametres   
 @app.route('/filter', methods=["GET", "POST"])
 def filter():
     try:
         if request.method == 'POST':
             temperature = request.form.get('temperature')
             humidity = request.form.get('humidity')
+            
             if temperature and humidity:
                 filtered_events = Event\
                                 .query\
@@ -98,7 +105,7 @@ def filter():
                                         events=filtered_events,\
                                         temperature=temperature,\
                                         humidity=humidity)
-            if temperature:
+            elif temperature:
                 filtered_events = Event\
                                 .query\
                                 .filter(Event.temperature == temperature)\
@@ -107,7 +114,7 @@ def filter():
                                         events=filtered_events,\
                                         temperature=temperature,\
                                         humidity=humidity)
-            if humidity:
+            elif humidity:
                 filtered_events = Event\
                                 .query\
                                 .filter(Event.humidity == humidity)\
@@ -115,7 +122,7 @@ def filter():
                 return render_template('filtered_events.html',\
                                         events=filtered_events,\
                                         temperature=temperature,\
-                                        humidity=humidity)
+                                        humidity=humidity)                                   
     except:
         error = 'Вы неправильно ввели значения. Введите значения типа INT'
         return render_template('filter.html', error=error)
@@ -123,6 +130,7 @@ def filter():
         return render_template('filter.html')
     
 
+#create method for sensors
 @app.route('/create_sensor', methods=["GET", "POST"])
 def create_sensor():
         try:
@@ -132,7 +140,7 @@ def create_sensor():
                 new_sensor = Sensor(name=name, type=type)
                 db.session.add(new_sensor)
                 db.session.commit()
-                success_message = f'Успешно добавлен сенсор {name}'
+                success_message = f'Успешно добавлен датчик {name}'
                 return render_template('create_sensor.html',\
                                         success_message=success_message)
         except(IntegrityError, Exception) as error:
@@ -158,6 +166,7 @@ def create_sensor():
             return render_template('create_sensor.html')
         
 
+#create method for event
 @app.route('/create_event', methods=["GET", "POST"])
 def create_event():
     try:
@@ -203,6 +212,7 @@ def create_event():
         return render_template('create_event.html')
     
 
+#Update method for events
 @app.route('/all_events/<int:id>/update', methods=["GET", "POST"])
 def update_event_info(id):
     try:
@@ -231,6 +241,7 @@ def update_event_info(id):
                                error=error)
     
 
+#Update method for sensors
 @app.route('/all_sensors/<int:id>/update', methods=["GET", "POST"])
 def update_sensor(id):
     try:
@@ -261,30 +272,51 @@ def update_sensor(id):
     except:
         return render_template('get_sensor_events.html')
 
+
+#upload *.json files from /json
 @app.route('/json_load', methods=["GET", "POST"])
 def load_events():
     try:
         if request.method == 'POST':
-            files = request.files.getlist("file")
+            #uploading files from UPLOAD_FOLDER
+            files = request.files.getlist("file") 
+            
             for file in files:
-                file.save(os.path.join(app.config['UPLOAD_FOLDER'], file.filename))
-                with open(os.path.join(app.config['UPLOAD_FOLDER'], file.filename), 'r', encoding='utf-8') as f:
+                file.save(os.path.join(app.config['UPLOAD_FOLDER'], 
+                                       file.filename))
+                with open(os.path.join(app.config['UPLOAD_FOLDER'], 
+                                       file.filename), 
+                                       'r', 
+                                       encoding='utf-8') as f:
+                    #json reading, get sensors_id
                     json_data = json.load(f)
-                    sensors_ids = [sensor.id for sensor in Sensor.query.all()] 
+                    sensors_ids = [sensor.id for sensor\
+                                   in Sensor.query.all()] 
+                    #parsing for values
                     for data in json_data:
                         sensor_id = data['sensor_id']
                         name = data['name']
-                        temperature = data['temperature'] if 'temperature' in data.keys() else None
-                        humidity = data['humidity'] if 'humidity' in data.keys() else None
+                        temperature = data['temperature']\
+                                      if 'temperature' in data.keys()\
+                                      else None
+                        humidity = data['humidity']\
+                                   if 'humidity' in data.keys()\
+                                   else None
+                        #checking for validation (if sensor_id not exist)
                         if sensor_id not in sensors_ids:
-                            print(f'sensor_id={sensor_id} не существует. Запись не будет добавлена в БД')
+                            print(f'sensor_id={sensor_id} не существует.\
+                                  \nЗапись не будет добавлена в БД')
                             continue
-                        object = Event(sensor_id, name, temperature, humidity)
-                        db.session.add(object)
+                        event = Event(sensor_id, 
+                                      name,
+                                      temperature,
+                                      humidity)
+                        #inserting data into the database
+                        db.session.add(event)
                         db.session.commit()
             return render_template('success_json_load.html',
                                 files=files)
         else:
-            return render_template('success_json_load.html')
+            return render_template('json_load.html')
     except:
         return render_template('json_load.html')

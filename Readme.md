@@ -38,3 +38,13 @@
 4) в /app/config.py поставить свои настройки 
 5) >python ./create_tables.py - создание таблиц в БД
 6)  >python ./run.py
+
+# Стек
+- Python3.9
+  - Flask
+  - jinja2
+  - SQLAlchemy
+  - psycopg2
+  - json
+- Postgres
+

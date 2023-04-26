@@ -11,15 +11,48 @@
             <form action="/">
                 <button>МЕНЮ</button>
             </form>
-            
-            {% if event %}
+
+            {% if error %}
+                <h3>{{ error }}</h3>
+            {% else %}
+
                 <p><b>ID События:</b> {{ event.id }}</p>
                 <p><b>ID Датчика:</b> {{ event.sensor_id }}</p>
                 <p><b>Название события:</b> {{ event.name }}</p>
                 <p><b>Температура:</b> {{ event.temperature }}°C</p>
                 <p><b>Влажность:</b> {{ event.humidity }}%</p>
-            {% else %}
-                <h3>{{ error }}</h3>
+
+                <center><h3>Обновление события</h3></center>
+
+                {% if done_message %}
+                    <h3>{{ done_message }}</h3>
+                {% endif %}
+
+                {% if annotation %}
+                    <h3>{{ annotation }}</h3>
+                {% endif %}
+
+                <form action="/all_events/{{ event.id }}/update" method="POST">
+                    <p>
+                        <label for="sensor_id">Введите <b>ID датчика</b> для события:</label>
+                        <br><input type="text" name="sensor_id" id="sensor_id" placeholder="Enter a number...">
+                    </p>
+                    <p>
+                        <label for="name">Введите <b>название</b> события:</label>
+                        <br><input type="text" name="name" id="name" placeholder="Enter a string...">
+                    </p>
+                    <p>
+                        <label for="temperature">Введите значение <b>температуры</b>, °C:</label>
+                        <br><input type="text" name="temperature" id="temperature" placeholder="Enter an integer...">
+                    </p>
+                    <p>
+                        <label for="humidity">Введите значение <b>влажности</b>, %:</label>
+                        <br><input type="text" name="humidity" id="humidity" placeholder="Enter an integer...">
+                    </p>
+                    <button type="submit">Обновить событие</button>
+                </form>
+
+                <br>
             {% endif %}
-            
+
     {% endblock %}

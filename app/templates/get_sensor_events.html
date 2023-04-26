@@ -6,14 +6,18 @@
 
     {% block body %}
 
-            {% if events or sensor %}
+            {% if error %}
+                {{ error }}
+            {% else %}
+
                 <center><h2><i>{{ sensor.name }}</i></h2></center>
 
                 <form action="/">
                     <button>МЕНЮ</button>
                 </form>
                 
-                <h3>Название сенсора: {{ sensor.name }}</h3>
+                
+                <h3>Название датчика: {{ sensor.name }}, тип: {{ sensor.type }}</h3>
                 {%if events == [] %}
                     <br>
                     <i>
@@ -22,21 +26,41 @@
                         </center>
                     </i>
                 {% else %}
-                    
-                <h3>События: </h3>
-                    {% for event in events %}
-                        <p>
-                            <h3>
-                                <li>
-                                    <a href="/all_events/{{ event.id }}">{{ event.name }}</a>
-                                </li>
-                            </h3>
-                        </p>
-                    {% endfor %}
-                    
+
+                {% if done_message %}
+                    <h3>{{ done_message }}</h3>
                 {% endif %}
-            {% else %}
-                {{ error }}
+
+                {% if annotation %}
+                    <h3>{{ annotation }}</h3>
+                {% endif %}
+                
+                <form action="/all_sensors/{{ sensor.id }}/update" method="POST">
+                    <p>
+                        <label for="name">Введите <b>название</b> датчика:</label>
+                        <br><input type="text" name="name" id="name" placeholder="Enter a string...">
+                    </p>
+                    <p>
+                        <label for="type">Введите <b>тип</b> датчика:</label>
+                        <br><input type="text" name="type" id="type" placeholder="Enter a number 1,2 or 3...">
+                    </p>
+                    <button type="submit">Обновить датчик</button>
+                </form>
+
+            <br> 
+                    <h3>События: </h3>
+                        {% for event in events %}
+                            <p>
+                                <h3>
+                                    <li>
+                                        <a href="/all_events/{{ event.id }}">{{ event.name }}</a>
+                                    </li>
+                                </h3>
+                            </p>
+                        {% endfor %}
+                        
+                    {% endif %}
+
             {% endif %} 
                           
     {% endblock %}

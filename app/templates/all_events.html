@@ -11,12 +11,8 @@
             <form action="/">
                 <button>МЕНЮ</button>
             </form>
-
-            {% if done_message %}
-                <h3>{{ done_message }}</h3>
-            {% endif %}
             
-            {%if events == [] %}
+            {% if events.items == [] %}
                 <br>
                 <i>
                     <center>
@@ -25,10 +21,10 @@
                 </i>
             {% else %}
 
-                {% for event in events %}
+                {% for event in events.items %}
                     <p>
                         <h3>
-                            <li>
+                            <li>                        
                                 <a href="all_events/{{ event.id }}">{{ event.name }}</a>
                             </li>
                         </h3>
@@ -39,6 +35,24 @@
                         <button type="submit" name="delete_event" value="{{ event.id }}">Удалить событие</button>
                     </form> 
                 {% endfor %} 
+
+                <br><br>
+                <center>
+                    {% if events.has_prev %}
+                        <a href="/all_events?page={{events.prev_num}}">
+                            « Newer events
+                        </a>
+                    {% else %}
+                        « Newer events
+                        {% endif %} |
+                    {% if events.has_next %}
+                        <a href="/all_events?page={{events.next_num}}">
+                            Older events »
+                        </a>
+                    {% else %}
+                        Older events »
+                    {% endif %}
+                </center>
 
             {% endif %}
 

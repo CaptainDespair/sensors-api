@@ -13,7 +13,9 @@ def index():
 @app.route('/all_events')
 def show_all_events():
     try:
-        events = Event.query.all()
+        page = request.args.get('page', type=int, default=1)
+        events = Event.query.paginate(page=page, per_page=5)
+
         return render_template('all_events.html', 
                                events=events)
     except:
@@ -26,21 +28,21 @@ def get_event_info(id):
         if request.method == "GET":
             event = Event.query.get(id)
             return render_template('event_info.html', 
-                                event=event)
-        if request.method == 'POST':
+                                    event=event)
+        elif request.method == 'POST':
             event_id = request.form.get('delete_event')
             event = Event.query.get(event_id)
             db.session.delete(event)
             db.session.commit()
-            done_message = 'Событие удалено'
-            return render_template('all_events.html',\
-                                   done_message=done_message)
+            return render_template('all_events.html',
+                                   event=event)
         else:
             return render_template('all_events.html')
     except:
-        error = 'Ошибка базы данных'
+        error = 'Событие удалено'
         return render_template('event_info.html',
-                               error=error)
+                               error=error,
+                               event=event)
 
 
 @app.route('/all_sensors')
@@ -76,13 +78,9 @@ def get_events_from_sensor(id):
         else:
             return render_template('all_sensors.html')
     except:
-        error = 'Ошибка базы данных'
-        return render_template('get_sensor_events.html',
-                               error=error)
-    
+        return render_template('all_sensors.html')
 
    
-
 @app.route('/filter', methods=["GET", "POST"])
 def filter():
     try:
@@ -176,14 +174,12 @@ def create_event():
             success_message = f'Успешно добавлено событие {name}'
             return render_template('create_event.html',\
                                     success_message=success_message)
-    except(IntegrityError, PendingRollbackError, Exception) as error:
+    except(IntegrityError, Exception) as error:
         if error == IntegrityError:
             get_max_id = Event\
                             .query\
                             .order_by(Event.id.desc())\
                             .first()
-            print('----------------')
-            print(get_max_id.id)
             max_id = get_max_id.id + 1
             new_event = Event(id=max_id,\
                                 sensor_id=sensor_id,\
@@ -204,3 +200,63 @@ def create_event():
                                     annotation=annotation)
     else:
         return render_template('create_event.html')
+    
+
+@app.route('/all_events/<int:id>/update', methods=["GET", "POST"])
+def update_event_info(id):
+    try:
+        if request.method == 'POST': 
+            event = Event.query.get(id)
+            event.sensor_id = request.form.get('sensor_id')
+            event.name = request.form.get('name')
+            event.temperature = request.form.get('temperature')
+            event.humidity = request.form.get('humidity')
+            if event.sensor_id and event.name and event.temperature and event.humidity:
+                db.session.commit()
+                done_message = 'Событие обновлено'
+                return render_template('event_info.html',\
+                                event=event,
+                                done_message=done_message)
+            else:
+                db.session.rollback()
+                annotation = 'Заполните все поля и введите валидные данные.'
+                return render_template('event_info.html',
+                                       annotation=annotation) 
+        else:
+            return render_template('all_events.html')
+    except:
+        error = 'Ошибка базы данных'
+        return render_template('event_info.html', 
+                               error=error)
+    
+
+@app.route('/all_sensors/<int:id>/update', methods=["GET", "POST"])
+def update_sensor(id):
+    try:
+        if request.method == 'POST': 
+            events = Event.query.\
+                        filter_by\
+                        (sensor_id = id)\
+                        .all()
+            sensor = Sensor.query.get(id)
+            sensor.name = request.form.get('name')
+            sensor.type = request.form.get('type')
+            if sensor.name and sensor.type:
+                db.session.commit()
+                done_message = 'Датчик обновлен'
+                return render_template('get_sensor_events.html',
+                                        sensor=sensor,
+                                        done_message=done_message,
+                                        events=events)
+            else:
+                db.session.rollback()
+                annotation = 'Заполните все поля и введите валидные данные.'
+                return render_template('get_sensor_events.html',
+                                        sensor=sensor,
+                                        annotation=annotation,
+                                        events=events) 
+        else:
+            return render_template('get_sensor_events.html')
+    except:
+        return render_template('get_sensor_events.html')
+

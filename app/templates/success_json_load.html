@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    upload
+{% endblock %}
+
+{% block body %}
+    <h2>УСПЕШНО</h2>
+    {% for file in files %}
+        File name: {{ file.filename }}
+    <h3>Многие записи могли быть не добавлены, в связи с тем, что в JSON объявлены несуществующие sensor_id</h3>
+    <br>
+    {% endfor %}
+{% endblock %}

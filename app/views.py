@@ -1,6 +1,7 @@
 from flask import request, render_template, redirect
 from sqlalchemy.exc import IntegrityError, PendingRollbackError
-
+import os
+import json
 
 from app import app, db
 from app.models import Event, Sensor
@@ -260,3 +261,30 @@ def update_sensor(id):
     except:
         return render_template('get_sensor_events.html')
 
+@app.route('/json_load', methods=["GET", "POST"])
+def load_events():
+    try:
+        if request.method == 'POST':
+            files = request.files.getlist("file")
+            for file in files:
+                file.save(os.path.join(app.config['UPLOAD_FOLDER'], file.filename))
+                with open(os.path.join(app.config['UPLOAD_FOLDER'], file.filename), 'r', encoding='utf-8') as f:
+                    json_data = json.load(f)
+                    sensors_ids = [sensor.id for sensor in Sensor.query.all()] 
+                    for data in json_data:
+                        sensor_id = data['sensor_id']
+                        name = data['name']
+                        temperature = data['temperature'] if 'temperature' in data.keys() else None
+                        humidity = data['humidity'] if 'humidity' in data.keys() else None
+                        if sensor_id not in sensors_ids:
+                            print(f'sensor_id={sensor_id} не существует. Запись не будет добавлена в БД')
+                            continue
+                        object = Event(sensor_id, name, temperature, humidity)
+                        db.session.add(object)
+                        db.session.commit()
+            return render_template('success_json_load.html',
+                                files=files)
+        else:
+            return render_template('success_json_load.html')
+    except:
+        return render_template('json_load.html')

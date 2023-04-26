@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    upload
+{% endblock %}
+
+{% block body %}
+    <h2>Загрузка json событий</h2>
+    <p>Выберите файл для загрузки</p>
+
+    <form method = "POST" enctype="multipart/form-data" action = "/json_load">   
+        <input type="file" name="file" multiple>
+        <input type ="submit" value="Загрузить"> 
+    </form>
+
+    <br>
+{% endblock %}

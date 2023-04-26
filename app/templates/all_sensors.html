@@ -12,6 +12,10 @@
                 <button>МЕНЮ</button>
             </form>
 
+            {% if done_message %}
+                <h3>{{ done_message }}</h3>
+            {% endif %}
+
             {% if sensors == [] %}
                 <br>
                 <i>
@@ -24,9 +28,15 @@
                 {% for sensor in sensors %}
                     <p>
                         <h3>
-                            <li><a href="all_sensors/{{ sensor.id }}">{{ sensor.name }}, type: {{ sensor.type }}</a></li>
+                            <li><a href="all_sensors/{{ sensor.id }}">ID:{{ sensor.id }}, {{ sensor.name }}, type: {{ sensor.type }}</a></li>
                         </h3>
                     </p>
+                    
+                    <form action="all_sensors/{{ sensor.id }}" method="POST">
+                    <input type="hidden" name="_method" value="DELETE">
+                    <button type="submit" name="delete_sensor" value="{{ sensor.id }}">Удалить датчик</button>
+                    </form> 
+                
                 {% endfor %} 
 
             {% endif %}

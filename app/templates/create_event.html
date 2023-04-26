@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    create event 
+{% endblock %}
+
+    {% block body %}
+
+            <center><h2>Event Creating</h2></center>
+
+            <form action="/">
+                <button>МЕНЮ</button>
+            </form>
+
+            <form action="/create_event" method="POST">
+                <p>
+                    <label for="sensor_id">Введите <b>ID датчика</b> для события:</label>
+                    <br><input type="text" name="sensor_id" id="sensor_id" placeholder="Enter a number...">
+                  </p>
+                <p>
+                    <label for="name">Введите <b>название</b> события:</label>
+                    <br><input type="text" name="name" id="name" placeholder="Enter a string...">
+                </p>
+                <p>
+                    <label for="temperature">Введите значение <b>температуры</b>, °C:</label>
+                    <br><input type="text" name="temperature" id="temperature" placeholder="Enter an integer...">
+                  </p>
+                <p>
+                    <label for="humidity">Введите значение <b>влажности</b>, %:</label>
+                    <br><input type="text" name="humidity" id="humidity" placeholder="Enter an integer...">
+                </p>
+                <button type="submit">Создать событие</button>
+              </form>
+              
+            <br>
+
+            {% if success_message %}
+                {{ success_message }}
+            {% endif %}
+            
+            {% if error_message %}
+              <i>{{ error_message }}</i>
+              <i>{{ annotation }}</i>
+              <i>{{ sensors_id }}</i>
+            {% endif %}
+            <br>
+
+    {% endblock %}

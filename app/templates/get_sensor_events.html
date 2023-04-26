@@ -5,34 +5,38 @@
 {% endblock %}
 
     {% block body %}
-    
-            <center><h2><i>{{ sensor.name }}</i></h2></center>
 
-            <form action="/">
-                <button>МЕНЮ</button>
-            </form>
-            
-            <h3>Название сенсора: {{ sensor.name }}</h3>
-            {%if events == [] %}
-                <br>
-                <i>
-                    <center>
-                        <h2>Событий нет</h2>
-                    </center>
-                </i>
-            {% else %}
+            {% if events or sensor %}
+                <center><h2><i>{{ sensor.name }}</i></h2></center>
+
+                <form action="/">
+                    <button>МЕНЮ</button>
+                </form>
                 
-            <h3>События: </h3>
-                {% for event in events %}
-                    <p>
-                        <h3>
-                            <li>
-                                <a href="/all_events/{{ event.id }}">{{ event.name }}</a>
-                            </li>
-                        </h3>
-                    </p>
-                {% endfor %}
-                 
-            {% endif %}
-
+                <h3>Название сенсора: {{ sensor.name }}</h3>
+                {%if events == [] %}
+                    <br>
+                    <i>
+                        <center>
+                            <h2>Событий нет</h2>
+                        </center>
+                    </i>
+                {% else %}
+                    
+                <h3>События: </h3>
+                    {% for event in events %}
+                        <p>
+                            <h3>
+                                <li>
+                                    <a href="/all_events/{{ event.id }}">{{ event.name }}</a>
+                                </li>
+                            </h3>
+                        </p>
+                    {% endfor %}
+                    
+                {% endif %}
+            {% else %}
+                {{ error }}
+            {% endif %} 
+                          
     {% endblock %}

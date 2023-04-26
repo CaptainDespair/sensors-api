@@ -12,10 +12,14 @@
                 <button>МЕНЮ</button>
             </form>
             
-            <p><b>ID События:</b> {{ event.id }}</p>
-            <p><b>ID Датчика:</b> {{ event.sensor_id }}</p>
-            <p><b>Название события:</b> {{ event.name }}</p>
-            <p><b>Температура:</b> {{ event.temperature }}°C</p>
-            <p><b>Влажность:</b> {{ event.humidity }}%</p>
-
+            {% if event %}
+                <p><b>ID События:</b> {{ event.id }}</p>
+                <p><b>ID Датчика:</b> {{ event.sensor_id }}</p>
+                <p><b>Название события:</b> {{ event.name }}</p>
+                <p><b>Температура:</b> {{ event.temperature }}°C</p>
+                <p><b>Влажность:</b> {{ event.humidity }}%</p>
+            {% else %}
+                <h3>{{ error }}</h3>
+            {% endif %}
+            
     {% endblock %}

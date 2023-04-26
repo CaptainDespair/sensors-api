@@ -11,8 +11,8 @@
             <form action="/">
                 <button>МЕНЮ</button>
             </form>
-            
-            {%if sensors == [] %}
+
+            {% if sensors == [] %}
                 <br>
                 <i>
                     <center>
@@ -24,7 +24,7 @@
                 {% for sensor in sensors %}
                     <p>
                         <h3>
-                            <li><a href="all_sensors/{{ sensor.id }}">{{ sensor.name }}</a></li>
+                            <li><a href="all_sensors/{{ sensor.id }}">{{ sensor.name }}, type: {{ sensor.type }}</a></li>
                         </h3>
                     </p>
                 {% endfor %} 

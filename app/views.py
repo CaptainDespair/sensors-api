@@ -1,7 +1,8 @@
 from flask import request
 from flask import render_template
+from sqlalchemy.exc import IntegrityError, DataError, DatabaseError
 
-from app import app
+from app import app, db
 from app.models import Event, Sensor
 
 @app.route('/')
@@ -97,3 +98,38 @@ def filter():
         return render_template('filter.html', error=error)
     else:
         return render_template('filter.html')
+    
+
+@app.route('/create_sensor', methods=["GET", "POST"])
+def create_sensor():
+        try:
+            if request.method == 'POST':
+                name = request.form.get('name')
+                type = request.form.get('type')
+                new_sensor = Sensor(name=name, type=type)
+                db.session.add(new_sensor)
+                db.session.commit()
+                success_message = f'Успешно добавлен сенсор {name}'
+                return render_template('create_sensor.html',\
+                                        success_message=success_message)
+        except(IntegrityError, DataError, Exception) as error:
+            if error == IntegrityError:
+                get_max_id = Sensor\
+                                .query\
+                                .order_by(Sensor.id.desc())\
+                                .first()
+                max_id = get_max_id.id + 1
+                new_sensor = Sensor(id = max_id, name=name, type=type)
+                db.session.add(new_sensor)
+                db.session.commit()
+                success_message = f'Успешно добавлен датчик {name}'
+                return render_template('create_sensor.html',\
+                                       success_message=success_message)
+            else:
+                error_message = 'Ошибка базы данных.' 
+                annotation = 'Поле "название" должно быть String, поле "тип" принимает 1, 2 или 3'
+                return render_template('create_sensor.html',\
+                                       error_message=error_message,
+                                       annotation=annotation)
+        else:
+            return render_template('create_sensor.html')

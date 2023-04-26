@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    create sensor 
+{% endblock %}
+
+    {% block body %}
+
+            <center><h2>Sensor Creating</h2></center>
+
+            <form action="/">
+                <button>МЕНЮ</button>
+            </form>
+
+            <form action="/create_sensor" method="POST">
+                <p>
+                  <label for="name">Введите <b>название</b> датчика:</label>
+                  <br><input type="text" name="name" id="name" placeholder="Enter a string...">
+                </p>
+                <p>
+                  <label for="type">Введите <b>тип</b> датчика:</label>
+                  <br><input type="text" name="type" id="type" placeholder="Enter a number in 1, 2 or 3">
+                </p>
+                <button type="submit">Создать датчик</button>
+              </form>
+              
+            <br>
+
+            {% if success_message %}
+                {{ success_message }}
+            {% endif %}
+            
+            {% if error_message %}
+              <i>{{ error_message }}</i>
+              <i>{{ annotation }}</i>
+            {% endif %}
+            <br>
+
+    {% endblock %}

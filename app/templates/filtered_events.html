@@ -12,13 +12,29 @@
             <button>МЕНЮ</button>
         </form>
         
-
+        {% if temperature and humidity %}
         <p>Применен фильтр:
             <br> 
                 <b>
                     temperature = {{ temperature }}°C, humidity = {{ humidity }}% 
                 </b>
         </p>
+        {% elif temperature %}
+        <p>Применен фильтр:
+            <br> 
+                <b>
+                    temperature = {{ temperature }}°C
+                </b>
+        </p>
+        {% else %}
+        <p>Применен фильтр:
+            <br> 
+                <b>
+                    humidity = {{ humidity }}% 
+                </b>
+        </p>
+        {% endif %}
+
         {%if events == [] %}
             <br>
             <i>
